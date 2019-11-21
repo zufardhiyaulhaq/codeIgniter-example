@@ -1,0 +1,43 @@
+{
+  "apiVersion": "apps/v1beta2",
+  "kind": "Deployment",
+  "metadata": {
+    "labels": {
+      "app": "codeigniter-example"
+    },
+    "name": "codeigniter-example-deployment"
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "codeigniter-example"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "codeigniter-example"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "command": [
+              "npm",
+              "start"
+            ],
+            "image": "#{image}",
+            "name": "codeigniter-example",
+            "ports": [
+              {
+                "containerPort": 8080,
+                "protocol": "TCP"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
