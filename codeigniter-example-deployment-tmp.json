@@ -27,7 +27,7 @@
               "npm",
               "start"
             ],
-            "image": "gocd/codeigniter-example:latest",
+            "image": "docker-registry.default.svc:5000/gocd/codeigniter-example",
             "name": "codeigniter-example",
             "ports": [
               {
