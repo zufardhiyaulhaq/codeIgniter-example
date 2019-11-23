@@ -5,7 +5,7 @@
     "labels": {
       "app": "codeigniter-example"
     },
-    "name": "codeigniter-example-deployment"
+    "name": "codeigniter-example-deployment-tmp"
   },
   "spec": {
     "replicas": 1,

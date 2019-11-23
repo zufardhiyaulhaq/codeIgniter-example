@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-sed -i "s~#{image}~$ARTIFACT_IMAGE~g" codeigniter-example-deployment.json
-
 if [ -z $KUBE_TOKEN ]; then
   echo "FATAL: Environment Variable KUBE_TOKEN must be specified."
   exit ${2:-1}
@@ -21,10 +19,24 @@ status_code=$(curl -sSk -H "Authorization: Bearer $KUBE_TOKEN" \
 
 if [ $status_code == 200 ]; then
   echo
-  echo "Updating deployment"
-  curl --fail -H 'Content-Type: application/strategic-merge-patch+json' -sSk -H "Authorization: Bearer $KUBE_TOKEN" \
-    "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/apps/v1beta2/namespaces/$NAMESPACE/deployments/codeigniter-example-deployment" \
-    -X PATCH -d @codeigniter-example-deployment.json
+  echo "Creating temporary deployment"
+  curl --fail -H 'Content-Type: application/json' -sSk -H "Authorization: Bearer $KUBE_TOKEN" \
+    "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/apps/v1beta2/namespaces/$NAMESPACE/deployments" \
+    -X POST -d @codeigniter-example-deployment-tmp.json
+  sleep 60
+  echo "Delete deployment"
+  curl -X DELETE --fail -H 'Accept: application/json' -sSk -H "Authorization: Bearer $KUBE_TOKEN" \
+    "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/apps/v1beta2/namespaces/$NAMESPACE/deployments/codeigniter-example-deployment"
+  sleep 60
+  echo "Creating deployment"
+  curl --fail -H 'Content-Type: application/json' -sSk -H "Authorization: Bearer $KUBE_TOKEN" \
+    "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/apps/v1beta2/namespaces/$NAMESPACE/deployments" \
+    -X POST -d @codeigniter-example-deployment.json
+  sleep 60
+  echo "Delete temporary deployment"
+  curl -X DELETE --fail -H 'Accept: application/json' -sSk -H "Authorization: Bearer $KUBE_TOKEN" \
+    "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/apps/v1beta2/namespaces/$NAMESPACE/deployments/codeigniter-example-deployment-tmp"
+
 else
  echo
  echo "Creating deployment"
