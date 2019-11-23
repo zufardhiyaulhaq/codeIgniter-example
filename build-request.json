@@ -1,0 +1,15 @@
+{
+    "kind": "BuildRequest",
+    "apiVersion": "build.openshift.io/v1",
+    "metadata": {
+        "name": "codeigniter-example-build",
+        "creationTimestamp": null
+    },
+    "triggeredBy": [
+        {
+            "message": "Build by goCD"
+        }
+    ],
+    "dockerStrategyOptions": {},
+    "sourceStrategyOptions": {}
+}
